@@ -24,7 +24,7 @@ export default {
       colors: {
         textColor: "#323333",
         placeholder: "rgba(50, 51, 51, 0.5)",
-        pureWhite: "#FFFEFE", //icon, //white text, //sidebar, //modal, //navbar
+        pureWhite: "#FFFEFE", //icon, //white text, //sidebar, //modal, //navbar 
         offWhite: "#FAFBFB", //div background
         primaryDark: "#323333", //welcome card
       },
