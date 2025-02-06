@@ -7,20 +7,20 @@ function Navbar() {
     <>
       <nav className="w-full h-[81px] bg-white flex items-center shadow-md justify-between px-4 sm:px-8">
         {/* Logo Section */}
-        <div className="flex items-center ">
-          <span className="text-gray-800 text-xl font-bold">ScrumX</span>
-        </div>
-
-        {/* Search Bar */}
-        <div className='relative w-full max-w-[303px]'>
-          <input
-            type="search"
-            placeholder="Search Projects"
-            className="w-full h-[33px] border border-gray-300 placeholder-gray-500 bg-gray-100 rounded-l-[10px] rounded-r-[20px] pl-4 pr-10 focus:outline-none focus:border-blue-500 text-primaryDark  "
-          />
-
-          <div className="w-[33px] h-[33px] rounded-full bg-textColor flex items-center justify-center absolute top-0 right-0 ">
-            <IoSearch className="text-white" aria-label="Search" />
+        <div className="flex gap-2  sm:w-[600px] sm:justify-between">
+          <div className="flex items-center ">
+            <span className="text-gray-800 text-[22px] font-bold">ScrumX</span>
+          </div>
+          {/* Search Bar */}
+          <div className='relative w-[170px] sm:w-[303px]'>
+            <input
+              type="search"
+              placeholder="Search Projects"
+              className="w-full h-[33px] border border-gray-300 placeholder-gray-500 bg-gray-100 rounded-l-[10px] rounded-r-[20px] pl-4 pr-10 focus:outline-none focus:border-blue-500 text-primaryDark  "
+            />
+            <div className="w-[33px] h-[33px] rounded-full bg-textColor flex items-center justify-center absolute top-0 right-0 ">
+              <IoSearch className="text-white" aria-label="Search" />
+            </div>
           </div>
         </div>
 

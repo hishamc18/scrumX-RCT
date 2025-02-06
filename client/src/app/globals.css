@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -21,3 +19,49 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide scrollbar but keep the scroll functionality */
+.scrollbar-hidden {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Custom Animation for Slide Out (right to left) */
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+
+
+/* Tailwind CSS Animation classes */
+.animate-slideIn {
+  animation: slideIn 0.7s ease-out forwards;
+}
+
+.animate-slideOut {
+  animation: slideOut 0.5s ease-out forwards;
+}
+

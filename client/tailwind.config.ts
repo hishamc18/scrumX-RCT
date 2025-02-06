@@ -27,7 +27,13 @@ export default {
         pureWhite: "#FFFEFE", //icon, //white text, //sidebar, //modal, //navbar 
         offWhite: "#FAFBFB", //div background
         primaryDark: "#323333", //welcome card
+        lightBlue: '#0094FF',
+        lightDark: "#EBEAEB",
       },
+      screens: {
+        'xl-custom': '1035px',
+        'xll-custom': '1500px'
+      }
     },
   },
   plugins: [],
