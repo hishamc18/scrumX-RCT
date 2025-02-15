@@ -7,6 +7,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require('./routes/notesRoutes');
+const errorHandler = require('./middlewares/errorHandler')
 const connectDB = require("./config/db");
 
 const app = express();
@@ -33,10 +34,11 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/api", notesRoutes);
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);  // Log the full error
-    res.status(500).send("Something broke!");
-  });
+
+app.use(errorHandler)
+
+
+
   
 
 
