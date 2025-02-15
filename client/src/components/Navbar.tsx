@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/app/store";
+import { getNewUserData } from "@/redux/features/authSlice";
+import LougoutComponent from "./LougoutComponent";
 function Navbar() {
+
+  const dispatch = useDispatch<AppDispatch>()
+  const user = useSelector((state: RootState)=> state.auth.user)
+  const [isOpenLogout, setIsOpenLogout]=useState(false)
+  const toggleLogout = () => setIsOpenLogout(!isOpenLogout)
+  useEffect(()=>{
+    dispatch(getNewUserData())
+  },[dispatch])
   return (
     <>
       <nav className="w-full h-[81px] bg-white flex items-center shadow-md justify-between px-4 sm:px-8">
@@ -27,23 +39,24 @@ function Navbar() {
         {/* User Profile Section */}
         <div className="flex items-center space-x-2">
           <div className=" flex items-center">
-            <Image
-              src="/images/Trendy Person Avatar.png"
+            <img
+              src={user?.avatar ?? "/Trendy Person Avatar.png"}
               alt="User Avatar"
-              width={50}
-              height={50}
-              className="rounded-full"
+              className="rounded-full w-[50px] h-[50px]"
             />
           </div>
           <div className="hidden lg:flex flex-col">
             <span className="text-gray-800 flex items-center gap-1">
-              Cristiano Ronaldo
-              <FaChevronDown className="text-gray-600" />
+            {`${user?.firstName} ${user?.lastName}`}
+              <FaChevronDown className="text-gray-600 cursor-pointer" onClick={toggleLogout}/>
             </span>
-            <small className="text-gray-600">Developer</small>
+            <small className="text-gray-600">{user?.userProfession}</small>
           </div>
         </div>
       </nav>
+      <div>
+        <LougoutComponent isOpen={isOpenLogout} onClose={() => setIsOpenLogout(false)}></LougoutComponent>
+      </div>
     </>
   );
 }

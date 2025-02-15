@@ -16,7 +16,7 @@ const Sidebar = () => {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    
     useEffect(() => {
         setActiveLink(activeLink); // Ensure active state on first render
     }, []);
