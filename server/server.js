@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require('./routes/notesRoutes');
 const connectDB = require("./config/db");
+const aiRoutes=require("./routes/aiRoutes")
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(passport.session());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api", notesRoutes);
+app.use("/api",aiRoutes)
 
 app.use((err, req, res, next) => {
     console.error(err.stack);  // Log the full error
