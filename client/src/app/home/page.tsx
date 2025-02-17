@@ -109,7 +109,7 @@ const Section: React.FC<SectionProps> = ({ title, projects, openModal }) => {
           </div>
           <div className="my-4">
             <Image
-              src="/CreateNewProject.png"
+              src="/CreateProject.png"
               alt="Create a new project"
               width={204}
               height={150}

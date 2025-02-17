@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require('./routes/notesRoutes');
 const projectRoutes = require('./routes/projectRoutes');
+const aiRoutes=require("./routes/aiRoutes")
 const connectDB = require("./config/db");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -34,6 +35,7 @@ app.use(passport.session());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api", notesRoutes);
+app.use("/api",aiRoutes)
 app.use("/api/projects", projectRoutes);
 
 app.use(errorHandler);

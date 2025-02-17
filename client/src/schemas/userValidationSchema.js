@@ -11,6 +11,9 @@ const userValidationSchema = Yup.object({
     .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must have at least one special character")
     .required("Password is required"),
   userProfession: Yup.string().required("Profession is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], "Passwords must match") // Ensures passwords match
+    .required("Confirm Password is required"),
 });
 
 export default userValidationSchema;
