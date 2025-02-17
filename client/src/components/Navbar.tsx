@@ -15,8 +15,6 @@ function Navbar() {
         dispatch(getNewUserData());
     }, [dispatch]);
 
-    console.log(user);
-
     return (
         <>
             <nav className="w-full h-[81px] bg-white flex items-center shadow-md justify-between px-4 sm:px-8">
