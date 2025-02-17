@@ -1,12 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authSlice from '../features/authSlice'
 import notesReducer from '../features/noteSlice'
-import personalTaskSlice from '../features/personalSlice'
+import aiSlice from "../features/aiSlice"
+import projectReducer from '../features/projectSlice'
+import trelloPersonal from "../features/personalSlice"
+
 const store = configureStore({
   reducer: {
     auth: authSlice,
     notes: notesReducer,
-    trello:personalTaskSlice,
+    aichat:aiSlice,
+    project:projectReducer,
+    trello:trelloPersonal
   },
 });
 

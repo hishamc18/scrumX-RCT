@@ -3,6 +3,9 @@ export interface User {
     email: string;
     firstName:string
     lastName: string;
+    userProfession:string;
+    password:string;
+    avatar:string;
     token?: string;
   }
   
