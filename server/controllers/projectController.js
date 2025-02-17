@@ -98,6 +98,7 @@ const checkInviteUserController = asyncHandler(async (req, res, next) => {
     }
 
     const user = await checkInviteUserService(email);
+    console.log(user)
 
     if (user) {
         return res.json(user);

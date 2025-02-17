@@ -53,6 +53,7 @@ const InviteUsers = () => {
         <div className="mt-3 h-32 overflow-y-auto scrollbar-none">
           {invitedUserData.slice().reverse().map((user, index) => (         // reverse() is update in original reference, slice() creates a new array without modifying the original.
             <div key={index} className="flex gap-3 p-2 rounded-md">
+              {console.log(user)}
               <img src={user.avatar} alt="user" width={42} height={5} className="rounded-full object-cover"/>
               <div>
                 <p className="font-medium text-primaryDark">{user.firstName} {user.lastName}</p>

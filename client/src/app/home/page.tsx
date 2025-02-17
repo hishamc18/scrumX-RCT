@@ -6,7 +6,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import AddProject from "../../components/AddProjectModal/AddProjectModal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch,RootState } from "@/redux/app/store";
-import { getGroupProjects } from "@/redux/features/projectSlice";
+import { getProjects } from "@/redux/features/projectSlice";
 
 interface JoinedMembers {
   userId: string; 
@@ -27,10 +27,10 @@ interface Project {
 const Page = () => {
   const dispatch=useDispatch<AppDispatch>()
   useEffect(()=>{
-    dispatch(getGroupProjects())
+    dispatch(getProjects())
   },[dispatch])
-  const groupProjects=useSelector((state:RootState)=>state.project.groupProjects)
-console.log(groupProjects,"dads")
+  const allProjects=useSelector((state:RootState)=>state.project.allProjects)
+console.log(allProjects,"dads")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIndividual, setIsIndividual] = useState(false);
 
@@ -49,7 +49,7 @@ console.log(groupProjects,"dads")
       {/* "Group project" */}
       <Section
         title="Group Projects"
-        projects={groupProjects.filter((project) => project.isGroup == true)}
+        projects={allProjects.filter((project) => project.isGroup == true)}
         openModal={() => {
           setIsIndividual(false);
           setIsModalOpen(true);
@@ -59,7 +59,7 @@ console.log(groupProjects,"dads")
       {/* Individual project */}
       <Section
         title="Individual Projects"
-        projects={groupProjects.filter(
+        projects={allProjects.filter(
           (project) => project.isGroup == false
         )}
         openModal={() => {
@@ -72,7 +72,7 @@ console.log(groupProjects,"dads")
   <AddProject
         isOpen={isModalOpen}
         onClose={() =>setIsModalOpen(false)}
-        onDispatch={()=>dispatch(getGroupProjects())}
+        onDispatch={()=>dispatch(getProjects())}
         isIndividual={isIndividual}
       />
     </div>

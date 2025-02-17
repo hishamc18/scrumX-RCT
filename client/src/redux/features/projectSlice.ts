@@ -29,7 +29,7 @@ interface InvitedUser {
 // Define the initial state
 interface ProjectState {
   projects: Project[];
-  groupProjects:Project[]
+  allProjects:Project[]
   checkInvitedUser: InvitedUser | null;
   invitedUser:InvitedUser[]
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -38,7 +38,7 @@ interface ProjectState {
 
 const initialState: ProjectState = {
   projects: [],
-  groupProjects:[],
+  allProjects:[],
   checkInvitedUser: null,
   invitedUser:[],
   status: "idle",
@@ -82,7 +82,7 @@ export const checkInviteUser = createAsyncThunk(
   }
 );
 
-export const getGroupProjects=createAsyncThunk("projects/getGroupProjects",async()=>{
+export const getProjects=createAsyncThunk("projects/getGroupProjects",async()=>{
   const response=await axiosInstance.get("/projects/all")
   return response.data
 })
@@ -154,9 +154,9 @@ const projectSlice = createSlice({
         state.status = "failed";
         state.error = action.payload as string; // Store the error message
       })
-      .addCase(getGroupProjects.fulfilled,(state,action)=>{
+      .addCase(getProjects.fulfilled,(state,action)=>{
         console.log(action.payload,"payload")
-        state.groupProjects=action.payload.projects 
+        state.allProjects=action.payload.projects 
       })
   },
 });
