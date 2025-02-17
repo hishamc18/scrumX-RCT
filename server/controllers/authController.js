@@ -1,10 +1,13 @@
-const { googleCallBackService, updateProfileAndLoginService, sendOtp, verifyOtp, checkEmailExistsService, loginUserService, generateResetToken, resetPassword } = require("../services/authService");
+const { googleCallBackService, updateProfileAndLoginService, sendOtp, verifyOtp, checkEmailExistsService, loginUserService, generateResetToken, resetPassword,  editUserService, editPasswotdService, compareUserPasswordService } = require("../services/authService");
 const asyncHandler = require("../utils/asyncHandler");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateToken");
 const { profileCompletionSchema } = require("../validators/authenticationValidator");
 const sendEmail = require("../utils/sendEmail");
 const { resetPasswordTemplate } = require("../templates/passwordResetTemplate")
 const CustomError = require("../utils/customError");
+const jwt = require('jsonwebtoken');
+
+const User = require('../models/userModel')
 
 // googleCallBack--------------------------------------------------------
 exports.googleCallbackController = asyncHandler(async (req, res) => {
@@ -31,6 +34,8 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
         res.redirect("http://localhost:3000/register/userCredentials");
     }
     res.redirect("http://localhost:3000/home");
+
+
 
 
 });
@@ -195,3 +200,63 @@ exports.resetPassword = asyncHandler(async (req, res) => {
     });
     res.status(200).json({ message: "Password updated successfully" });
 });
+
+exports.editUserController = asyncHandler(async (req, res) => {
+
+    const userId = req.user.id
+
+    let { firstName, lastName, userProfession, avatar, } = req.body
+    if (req.file) {
+        avatar = req.file.path
+    }
+    const updatedUser = await editUserService({ firstName, lastName, userProfession, avatar, userId })
+
+    const accessToken = generateAccessToken(updatedUser)
+    const refreshToken = generateRefreshToken(updatedUser)
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true, // This makes the cookie inaccessible to JavaScript
+        secure: true,
+        maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
+        sameSite: "none", // Prevent CSRF attacks
+        path: "/",
+    });
+
+    res.status(200).json({
+        message: "User updated successfully",
+        user: updatedUser,
+        accessToken: accessToken,
+    });
+})
+
+exports.compareUserPasswordController = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const { currentPassword } = req.body;
+    
+    try {
+        const result = await compareUserPasswordService({userId, currentPassword});
+
+        res.status(200).json(result);
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+  });
+  
+
+exports.editPasswordController = asyncHandler(async (req, res) => {
+    const userId = req.user.id
+
+    const { currentPassword, newPassword } = req.body
+    const updatePassword = await editPasswotdService({ currentPassword, newPassword, userId })
+    res.status(200).json({
+        message: "User updated successfully",
+        newPassword: updatePassword,
+    })
+})
+

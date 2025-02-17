@@ -9,6 +9,7 @@ const generateAccessToken = (user) => {
             lastName: user.lastName || " ",
             avatar: user.avatar || " ",
             profileCompleted:user.profileCompleted
+            userProfession:user.userProfession || " "
         },
         process.env.JWT_ACCESS_SECRET, 
         { expiresIn: "7d" }
@@ -24,6 +25,7 @@ const generateRefreshToken = (user) => {
             lastName: user.lastName || " ",
             avatar: user.avatar || " ",
             profileCompleted:user.profileCompleted
+            userProfession:user.userProfession || " "
         },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "7d" } // Refresh token expires in 7 days
