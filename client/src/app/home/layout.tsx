@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SlArrowRight } from "react-icons/sl";
 import ChatWithAI from "@/components/chatWithAi";
 import Sidebar from "@/components/Sidebar";
@@ -8,22 +8,32 @@ import Navbar from "@/components/Navbar";
 import ReduxProvider from "../../redux/ReduxProvider";
 import "../../app/globals.css";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [imagePosition, setImagePosition] = useState({ x: 1450, y: 720 }); // Initial position
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
+  useEffect(() => {
+    const updateImagePosition = () => {
+      setImagePosition({
+        x: window.innerWidth * 0.95,
+        y: window.innerHeight * 0.91,
+      });
+    };
+
+    updateImagePosition(); // Set initial position
+    window.addEventListener("resize", updateImagePosition);
+
+    return () => window.removeEventListener("resize", updateImagePosition);
+  }, []);
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const openChat = () => setIsChatOpen((prev) => !prev);
 
-  // Start dragging the image
+  // Start dragging
   const startDrag = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setDragging(true);
     setOffset({
@@ -42,9 +52,7 @@ export default function RootLayout({
   };
 
   // Stop dragging
-  const stopDrag = () => {
-    setDragging(false);
-  };
+  const stopDrag = () => setDragging(false);
 
   return (
     <html lang="en">
@@ -69,7 +77,7 @@ export default function RootLayout({
 
               {/* Main Content */}
               <div
-                className={`transition-all duration-300 flex-1 pt-20 overflow-y-auto ${
+                className={`transition-all duration-300 flex-1 pt-20 overflow-y-auto scrollbar-hidden ${
                   isSidebarOpen ? "ml-[210px]" : ""
                 }`}
               >
@@ -112,15 +120,15 @@ export default function RootLayout({
             {/* AI Chat Modal Above the Image */}
             {isChatOpen && (
               <div
-                className="fixed w-80 h-[500px] shadow-lg rounded-lg z-50 hidden sm:block"
+                className="fixed w-80 h-[500px shadow-lg rounded-lg z-50 hidden sm:block"
                 style={{
-                  left: `${imagePosition.x - 276}px`, // Centered above the icon
-                  top: `${imagePosition.y - 560}px`, // Positioned above the image
+                  left: `${imagePosition.x - 355}px`,
+                  top: `${imagePosition.y - 615}px`,
                 }}
               >
                 <ChatWithAI />
                 <button
-                  className="absolute top-2 right-2 text-black p-1 rounded-full"
+                  className="absolute text-[18px] top-2 left-[370px] text-black p-1 rounded-full"
                   onClick={() => setIsChatOpen(false)}
                 >
                   ×

@@ -138,7 +138,7 @@ function MyProfile({
       initialValues={{
         firstName: user?.firstName || "",
         lastName: user?.lastName || "",
-        profession: user?.userProfession || "",
+        profession: user?.userProfession || " ",
         avatar: null,
         password: "",
         newpassword: "",
@@ -174,7 +174,7 @@ function MyProfile({
             <div className="flex px-10">
               <label className="cursor-pointer relative">
                 <img
-                  src={user?.avatar ? user.avatar : "/Avatar.png"}
+                  src={user?.avatar || "/Avatar.png"}
                   alt="userAvatar"
                   className="w-[93px] h-[89px] rounded-full border border-[#969797]"
                 />

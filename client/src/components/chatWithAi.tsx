@@ -43,13 +43,13 @@ const ChatWithAI = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto h-[550px] flex flex-col bg-white rounded-md font-poppins">
+    <div className="w-[400px] mx-auto h-[600px] flex flex-col bg-white border-gray-300 border-[1px] rounded-md font-poppins">
       {/* Header */}
-      <div className="p-3 border bg-offWhite text-textColor  font-semibold flex items-center gap-1">
-        <img src="/logo.png" alt="logo" className="w-11 h-11" />
+      <div className="p-3 border rounded-md bg-offWhite text-textColor  font-semibold flex items-center gap-1">
+        <img src="/logo.png" alt="logo" className="w-14 h-14" />
         <div>
           <h1 className="text-[15px] text-textColor">ScrumX.ai</h1>
-          <p className="text-[13px] text-placeholder">
+          <p className="text-[12px] text-placeholder">
             How can I help you today?
           </p>
         </div>
@@ -60,7 +60,7 @@ const ChatWithAI = () => {
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-2 space-y-4 scrollbar-none"
       >
-        {aiHistory.length === 0 ? (
+        {aiHistory.length === 0 && !pendingQuestion ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-2xl font-semibold bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">
                 Hi, {user?.firstName}
@@ -106,7 +106,7 @@ const ChatWithAI = () => {
             ))}
 
             {/* Show "Thinking..." for the latest user input */}
-            {loading && pendingQuestion && (
+            {loading && (
               <div className="flex flex-col">
                 <div className="self-end bg-gray-200 text-[12px] text-black px-4 py-2 rounded-lg max-w-sm shadow-md">
                   {pendingQuestion}
@@ -121,7 +121,7 @@ const ChatWithAI = () => {
       </div>
 
       {/* Input Section */}
-      <div className="p-4 bg-pureWhite flex items-center gap-2">
+      <div className="p-4 rounded-md bg-pureWhite flex items-center gap-2">
         {/* Input Box */}
         <div className="flex-1 flex items-center bg-gray-200 rounded-md px-4 py-2">
           <textarea

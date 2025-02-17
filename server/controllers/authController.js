@@ -1,10 +1,11 @@
-const { googleCallBackService, updateProfileAndLoginService, editUserService, editPasswotdService, compareUserPasswordService } = require("../services/authService");
+const { googleCallBackService, updateProfileAndLoginService, sendOtp, verifyOtp, checkEmailExistsService, loginUserService, generateResetToken, resetPassword,  editUserService, editPasswotdService, compareUserPasswordService } = require("../services/authService");
 const asyncHandler = require("../utils/asyncHandler");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateToken");
 const { profileCompletionSchema } = require("../validators/authenticationValidator");
+const sendEmail = require("../utils/sendEmail");
+const { resetPasswordTemplate } = require("../templates/passwordResetTemplate")
+const CustomError = require("../utils/customError");
 const jwt = require('jsonwebtoken');
-
-const User = require('../models/userModel')
 
 // googleCallBack--------------------------------------------------------
 exports.googleCallbackController = asyncHandler(async (req, res) => {
@@ -15,16 +16,16 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
     const { profileCompleted, refreshToken, accessToken } = await googleCallBackService(req.user);
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
     res.cookie("accessToken", accessToken, {
-        httpOnly: true, // This makes the cookie inaccessible to JavaScript
+        httpOnly: true, 
         secure: true,
-        // maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        sameSite: "none", // Prevent CSRF attacks
+        // maxAge: 15 * 60 * 1000, 
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
         path: "/",
     });
     if (!profileCompleted) {
@@ -33,12 +34,14 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
     res.redirect("http://localhost:3000/home");
 
 
+
+
 });
 
 // userData for userCompletation ui--------------------------------------------------------
 exports.newUserInfoController = asyncHandler(async (req, res) => {
     const user = req.user
-    res.json({ email: user.email, firstName: user.firstName, lastName: user.lastName, userProfession: user.userProfession, avatar: user.avatar })
+    res.json({ email: user.email, firstName: user.firstName, lastName: user.lastName, avatar: user.avatar, userProfession: user.userProfession })
 })
 
 // update Profile (profileCompleted:true)--------------------------------------------
@@ -48,18 +51,18 @@ exports.updateProfileAndLoginController = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: error.details[0].message });
     }
     const { refreshToken, accessToken, user } = await updateProfileAndLoginService(req.body);
-    // Set Refresh Token in HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.cookie("accessToken", accessToken, {
-        httpOnly: true, // This makes the cookie inaccessible to JavaScript
+        httpOnly: true,
         secure: true,
-        maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
-        sameSite: "none", // Prevent CSRF attacks
+        // maxAge: 15 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
         path: "/",
     });
     res.json({ profileCompleted: user.profileCompleted })
@@ -73,16 +76,129 @@ exports.refreshTokenController = asyncHandler(async (req, res) => {
     }
     // Verify the refresh token
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    // Generate a new access token
+
     const newAccessToken = generateAccessToken({ id: decoded.id, email: decoded.email });
     res.cookie("accessToken", newAccessToken, {
-        httpOnly: true, // This makes the cookie inaccessible to JavaScript
-        secure: process.env.NODE_ENV === "production", // Ensure the cookie is sent only over HTTPS in production
-        maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
-        sameSite: "Strict", // Prevent CSRF attacks
+        httpOnly: true, 
+        secure: true,
+        maxAge: 15 * 60 * 1000,
+        sameSite: "None",
     });
-    console.log(newAccessToken);
     res.status(200).json({ message: "Access token refreshed successfully" });
+});
+
+//checking email exist
+exports.checkEmailExistsController = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+    }
+    const exists = await checkEmailExistsService(email);
+    return res.status(200).json({ exists });
+});
+
+
+// login password
+exports.loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    const { accessToken, refreshToken } = await loginUserService(email, password);
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        // maxAge: 15 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
+        path: "/",
+    });
+    res.status(200).json({ message: "Login Successfull" })
+});
+
+
+// send OTP
+exports.sendOtpController = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        res.status(400);
+        throw new CustomError("Email is required");
+    }
+    const response = await sendOtp(email);
+    res.json(response);
+});
+
+
+// verify OTP
+exports.verifyOtpController = asyncHandler(async (req, res) => {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+        res.status(400);
+        throw new CustomError("Email and OTP are required");
+    }
+    const { message, accessToken, refreshToken } = await verifyOtp(email, otp);
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        // maxAge: 15 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
+        path: "/",
+    });
+    res.status(200).json(message);
+});
+
+
+// Forgot Password 
+exports.forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    const resetToken = await generateResetToken(email);
+    if (!resetToken) throw new CustomError("User not found", 404);
+
+    const resetUrl = `http://localhost:3000//register?reset=true&token=${resetToken}`;
+    const html = resetPasswordTemplate(resetUrl);
+    await sendEmail(email, "Your Link for Reset Password", html);
+    res.status(200).json({ message: "Password reset link sent to email" });
+});
+
+// Reset Password
+exports.resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const { user, accessToken, refreshToken } = await resetPassword(token, password);    
+    console.log(user, accessToken, refreshToken);
+    
+    if (!user) throw new CustomError("Invalid or expired token", 400);
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        // maxAge: 15 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
+        path: "/",
+    });
+    res.status(200).json({ message: "Password updated successfully" });
 });
 
 exports.editUserController = asyncHandler(async (req, res) => {
@@ -100,15 +216,16 @@ exports.editUserController = asyncHandler(async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.cookie("accessToken", accessToken, {
         httpOnly: true, // This makes the cookie inaccessible to JavaScript
         secure: true,
-        maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
-        sameSite: "none", // Prevent CSRF attacks
+        // maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None", // Prevent CSRF attacks
         path: "/",
     });
 
@@ -143,4 +260,24 @@ exports.editPasswordController = asyncHandler(async (req, res) => {
         newPassword: updatePassword,
     })
 })
+
+
+// Logout User
+exports.logoutUser = asyncHandler(async (req, res) => {
+    console.log("logout")
+    res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: '/'
+    });
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: '/'
+    });
+
+    res.status(200).json({ message: 'Logged out successfully' });
+});
 

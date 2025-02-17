@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        firstName: { type: String, required: true },
+        firstName: { type: String },
         lastName: { type: String },
         email: { type: String, required: true, unique: true },
         googleId: { type: String }, // Store Google ID if needed
@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema(
         profileCompleted: { type: Boolean, default: false }, // Track if extra credentials are completed
         password: { type: String }, // Store password for email-based users
         userProfession: { type: String }, // New field for user profession
-        isActive: { type: Boolean, default: true }, // Track user activation
+        isActive: { type: Boolean, default: true },
+        resetPasswordToken: String,
+        resetPasswordExpires: Date,
     },
     { timestamps: true }
 );
