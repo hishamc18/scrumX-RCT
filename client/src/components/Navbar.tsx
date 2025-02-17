@@ -42,7 +42,7 @@ function Navbar() {
                 <div className="flex items-center space-x-2 relative">
                     <div className=" flex items-center">
                         <img
-                            src={user?.avatar || "/Avatar.png"}
+                            src={user && user.avatar != " " ? user.avatar : "/Avatar.png"}
                             alt="User Avatar"
                             className="rounded-full w-[50px] h-[50px]"
                             referrerPolicy="no-referrer"
