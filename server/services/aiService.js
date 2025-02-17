@@ -4,7 +4,7 @@ const User=require("../models/userModel.js")
 require("dotenv").config();
 
 const apiKey = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI("AIzaSyDHkiAZ8c6DFP9fTXjdgIKcU9KH1e7cXQ8");
+const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",

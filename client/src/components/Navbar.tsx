@@ -15,8 +15,6 @@ function Navbar() {
         dispatch(getNewUserData());
     }, [dispatch]);
 
-    console.log(user);
-
     return (
         <>
             <nav className="w-full h-[81px] bg-white flex items-center shadow-md justify-between px-4 sm:px-8">
@@ -42,7 +40,7 @@ function Navbar() {
                 <div className="flex items-center space-x-2 relative">
                     <div className=" flex items-center">
                         <img
-                            src={user?.avatar || "/Avatar.png"}
+                            src={user?.avatar && user.avatar.trim() !== "" ? user.avatar : "/Avatar.png"}
                             alt="User Avatar"
                             className="rounded-full w-[50px] h-[50px]"
                             referrerPolicy="no-referrer"
