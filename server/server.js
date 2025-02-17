@@ -7,6 +7,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require('./routes/notesRoutes');
+const personalTrelloRoutes = require('./routes/personalTrello');
 const connectDB = require("./config/db");
 
 const app = express();
@@ -32,9 +33,10 @@ app.use(passport.session());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api", notesRoutes);
+app.use("/api",personalTrelloRoutes)
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);  // Log the full error
+    console.error(err.stack); 
     res.status(500).send("Something broke!");
   });
   
