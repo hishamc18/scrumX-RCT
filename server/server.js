@@ -7,9 +7,10 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require('./routes/notesRoutes');
-const errorHandler = require('./middlewares/errorHandler')
-const connectDB = require("./config/db");
+const projectRoutes = require('./routes/projectRoutes');
 const aiRoutes=require("./routes/aiRoutes")
+const connectDB = require("./config/db");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -35,14 +36,9 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/api", notesRoutes);
 app.use("/api",aiRoutes)
+app.use("/api/projects", projectRoutes);
 
-
-app.use(errorHandler)
-
-
-
-  
-
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
