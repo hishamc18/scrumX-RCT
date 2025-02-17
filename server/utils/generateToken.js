@@ -1,16 +1,16 @@
 const jwt = require("jsonwebtoken");
 
-const generateAccessToken = (user) => {
+const generateAccessToken = (user) => {    
     return jwt.sign(
         {
             id: user._id,
             email: user.email,
-            firstName: user.firstName,
+            firstName: user.firstName || " ",
             lastName: user.lastName || " ",
-            avatar: user.avatar,
+            avatar: user.avatar || " ",
             profileCompleted:user.profileCompleted
         },
-        process.env.JWT_ACCESS_SECRET, // Ensure this key is set in your environment
+        process.env.JWT_ACCESS_SECRET, 
         { expiresIn: "7d" }
     );
 };
@@ -20,9 +20,9 @@ const generateRefreshToken = (user) => {
         {
             id: user._id,
             email: user.email,
-            firstName: user.firstName,
+            firstName: user.firstName || " ",
             lastName: user.lastName || " ",
-            avatar: user.avatar,
+            avatar: user.avatar || " ",
             profileCompleted:user.profileCompleted
         },
         process.env.JWT_REFRESH_SECRET,
