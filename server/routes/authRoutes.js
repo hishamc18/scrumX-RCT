@@ -1,6 +1,6 @@
 const express = require("express");
 const passport = require("passport");
-const { refreshTokenController, googleCallbackController, updateProfileAndLoginController, newUserInfoController, sendOtpController, verifyOtpController, checkEmailExistsController, loginUser, forgotPassword, resetPassword, editUserController, editPasswordController, compareUserPasswordController } = require("../controllers/authController");
+const { refreshTokenController, googleCallbackController, updateProfileAndLoginController, newUserInfoController, sendOtpController, verifyOtpController, checkEmailExistsController, loginUser, forgotPassword, resetPassword, editUserController, editPasswordController, compareUserPasswordController, logoutUser } = require("../controllers/authController");
 const verifyToken = require("../middlewares/verifyToken");
 const upload  = require('../middlewares/uploadMiddleware')
 
@@ -32,6 +32,8 @@ router.put('/editUser' ,verifyToken, upload.single('avatar'),editUserController)
 router.post('/comparePassword',verifyToken,compareUserPasswordController)
 //userPassword update
 router.put('/editPassword',verifyToken,editPasswordController)
+//logout
+router.post('/logout', logoutUser);
 
 
 

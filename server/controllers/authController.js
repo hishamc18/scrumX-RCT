@@ -7,8 +7,6 @@ const { resetPasswordTemplate } = require("../templates/passwordResetTemplate")
 const CustomError = require("../utils/customError");
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/userModel')
-
 // googleCallBack--------------------------------------------------------
 exports.googleCallbackController = asyncHandler(async (req, res) => {
     if (!req.user) {
@@ -18,8 +16,8 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
     const { profileCompleted, refreshToken, accessToken } = await googleCallBackService(req.user);
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
     res.cookie("accessToken", accessToken, {
@@ -27,7 +25,7 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
         secure: true,
         // maxAge: 15 * 60 * 1000, 
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: "none",
+        sameSite: "None",
         path: "/",
     });
     if (!profileCompleted) {
@@ -43,7 +41,7 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
 // userData for userCompletation ui--------------------------------------------------------
 exports.newUserInfoController = asyncHandler(async (req, res) => {
     const user = req.user
-    res.json({ email: user.email, firstName: user.firstName, lastName: user.lastName })
+    res.json({ email: user.email, firstName: user.firstName, lastName: user.lastName, avatar: user.avatar, userProfession: user.userProfession })
 })
 
 // update Profile (profileCompleted:true)--------------------------------------------
@@ -55,15 +53,16 @@ exports.updateProfileAndLoginController = asyncHandler(async (req, res) => {
     const { refreshToken, accessToken, user } = await updateProfileAndLoginService(req.body);
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: true,
-        maxAge: 15 * 60 * 1000,
-        sameSite: "none",
+        // maxAge: 15 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
         path: "/",
     });
     res.json({ profileCompleted: user.profileCompleted })
@@ -81,9 +80,9 @@ exports.refreshTokenController = asyncHandler(async (req, res) => {
     const newAccessToken = generateAccessToken({ id: decoded.id, email: decoded.email });
     res.cookie("accessToken", newAccessToken, {
         httpOnly: true, 
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 15 * 60 * 1000, 
-        sameSite: "Strict",
+        secure: true,
+        maxAge: 15 * 60 * 1000,
+        sameSite: "None",
     });
     res.status(200).json({ message: "Access token refreshed successfully" });
 });
@@ -107,15 +106,16 @@ exports.loginUser = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await loginUserService(email, password);
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: true,
-        maxAge: 15 * 60 * 1000,
-        sameSite: "none",
+        // maxAge: 15 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
         path: "/",
     });
     res.status(200).json({ message: "Login Successfull" })
@@ -145,8 +145,8 @@ exports.verifyOtpController = asyncHandler(async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.cookie("accessToken", accessToken, {
@@ -154,7 +154,7 @@ exports.verifyOtpController = asyncHandler(async (req, res) => {
         secure: true,
         // maxAge: 15 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: "none",
+        sameSite: "None",
         path: "/",
     });
     res.status(200).json(message);
@@ -216,15 +216,16 @@ exports.editUserController = asyncHandler(async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.cookie("accessToken", accessToken, {
         httpOnly: true, // This makes the cookie inaccessible to JavaScript
         secure: true,
-        maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
-        sameSite: "none", // Prevent CSRF attacks
+        // maxAge: 15 * 60 * 1000, // Access token expiration time (15 minutes)
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "None", // Prevent CSRF attacks
         path: "/",
     });
 
@@ -259,4 +260,24 @@ exports.editPasswordController = asyncHandler(async (req, res) => {
         newPassword: updatePassword,
     })
 })
+
+
+// Logout User
+exports.logoutUser = asyncHandler(async (req, res) => {
+    console.log("logout")
+    res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: '/'
+    });
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: '/'
+    });
+
+    res.status(200).json({ message: 'Logged out successfully' });
+});
 

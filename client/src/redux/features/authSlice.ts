@@ -17,13 +17,13 @@ interface AuthState {
   passwordResetError: string | null;
 }
 
-interface UserData {
-  firstName: string | null;
-  lastName: string | null;
-  userProfession: string | null;
-  password: string | null;
-  email: string | null
-}
+// interface UserData {
+//   firstName: string | null;
+//   lastName: string | null;
+//   userProfession: string | null;
+//   password: string | null;
+//   email: string | null
+// }
 
 const initialState: AuthState = {
   user: null,
@@ -100,7 +100,7 @@ export const updateUserProfile = createAsyncThunk<User, FormData>(
 export const compareUserPassword = createAsyncThunk(
   "auth/compareUserPassword",
   async (currentPassword: { currentPassword: string }, { rejectWithValue }) => {
-   
+
     try {
       console.log(currentPassword, 'try')
       const response = await axios.post(
@@ -165,11 +165,11 @@ export const sendOtp = createAsyncThunk(
 // Verify OTP
 export const verifyOtp = createAsyncThunk(
   'auth/verifyOtp',
-  async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {    
+  async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post("http://localhost:3300/auth/verify-otp", { email, otp }, { withCredentials: true });
       console.log(response);
-      
+
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "OTP verification failed");
@@ -184,7 +184,7 @@ export const login = createAsyncThunk(
     try {
       const response = await axios.post("http://localhost:3300/auth/login", { email, password }, { withCredentials: true });
       console.log(response.data);
-      
+
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -196,7 +196,7 @@ export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3300/auth/forgot-password', { email }, {withCredentials: true});
+      const response = await axios.post('http://localhost:3300/auth/forgot-password', { email }, { withCredentials: true });
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to send reset email');
@@ -209,14 +209,26 @@ export const resetPassword = createAsyncThunk(
   'auth/resetPassword',
   async ({ token, password }: { token: string; password: string }, { rejectWithValue }) => {
     console.log(token, password, "slice");
-    
+
     try {
-      const response = await axios.post(`http://localhost:3300/auth/reset-password/${token}`, { password }, {withCredentials: true});      
+      const response = await axios.post(`http://localhost:3300/auth/reset-password/${token}`, { password }, { withCredentials: true });
       return response.data;
     } catch (err: any) {
       console.log(err);
-      
+
       return rejectWithValue(err.response?.data?.message || 'Password reset failed');
+    }
+  }
+);
+
+
+export const logoutUser = createAsyncThunk<void, void, { rejectValue }>(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axios.post("http://localhost:3300/auth/logout", {}, { withCredentials: true });
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Failed to logout");
     }
   }
 );
@@ -224,50 +236,9 @@ export const resetPassword = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {
-    logout: (state) => {
-      state.user = null;
-      localStorage.removeItem('token');
-    },
-
-  },
+  reducers: {},
   extraReducers: builder => {
     builder
-    .addCase(updateUserProfile.pending, (state) => {
-        state.loading = true
-      })
-      .addCase(updateUserProfile.fulfilled, (state, action) => {
-        state.loading = false
-        state.user = action.payload
-      })
-      .addCase(updateUserProfile.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload as string
-      })
-      //compareUserPassword
-      .addCase(compareUserPassword.pending, (state) => {
-        state.loading = true
-      })
-      .addCase(compareUserPassword.fulfilled, (state, action) => {
-        state.loading = false
-        state.user = action.payload
-      })
-      .addCase(compareUserPassword.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload as string
-      })
-      //updateUserPassword
-      .addCase(updateUserPassword.pending, (state) => {
-        state.loading = true
-      })
-      .addCase(updateUserPassword.fulfilled, (state, action) => {
-        state.loading = false
-        state.user = action.payload
-      })
-      .addCase(updateUserPassword.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload as string
-      })
       //  Get New User Data
       .addCase(getNewUserData.pending, (state) => {
         state.loading = true;
@@ -382,8 +353,8 @@ const authSlice = createSlice({
         state.otpLoading = false;
         state.otpError = action.payload as string;
       })
-       // Forgot Password
-       .addCase(forgotPassword.pending, (state) => {
+      // Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
@@ -407,9 +378,22 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.passwordResetError = action.payload as string;
-      });
+      })
+      // Logout User
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.error = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;

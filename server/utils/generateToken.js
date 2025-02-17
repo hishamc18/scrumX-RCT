@@ -8,7 +8,7 @@ const generateAccessToken = (user) => {
             firstName: user.firstName || " ",
             lastName: user.lastName || " ",
             avatar: user.avatar || " ",
-            profileCompleted:user.profileCompleted
+            profileCompleted:user.profileCompleted,
             userProfession:user.userProfession || " "
         },
         process.env.JWT_ACCESS_SECRET, 
@@ -24,7 +24,7 @@ const generateRefreshToken = (user) => {
             firstName: user.firstName || " ",
             lastName: user.lastName || " ",
             avatar: user.avatar || " ",
-            profileCompleted:user.profileCompleted
+            profileCompleted:user.profileCompleted,
             userProfession:user.userProfession || " "
         },
         process.env.JWT_REFRESH_SECRET,

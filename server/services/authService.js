@@ -59,7 +59,7 @@ exports.updateProfileAndLoginService = async ({ email, password, userProfession,
     user.userProfession = userProfession;
     user.profileCompleted = true; // Mark profile as completed
 
-      await user.save();
+    await user.save();
   
   // Generate access and refresh tokens
   const accessToken = await generateAccessToken(user);
@@ -241,6 +241,7 @@ exports.editPasswotdService = async ({ currentPassword, newPassword, userId }) =
 
     return user
 };
+
 
 
 
