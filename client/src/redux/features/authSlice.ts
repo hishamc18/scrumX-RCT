@@ -269,7 +269,6 @@ const authSlice = createSlice({
       })
       .addCase(compareUserPassword.fulfilled, (state, action) => {
         state.loading = false
-        state.user = action.payload
       })
       .addCase(compareUserPassword.rejected, (state, action) => {
         state.loading = false

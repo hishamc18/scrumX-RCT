@@ -58,6 +58,7 @@ exports.updateProfileAndLoginService = async ({ email, password, userProfession,
     user.lastName = lastName
     user.userProfession = userProfession;
     user.profileCompleted = true; // Mark profile as completed
+    user.avatar = "/Avatar.png"
 
     await user.save();
   
