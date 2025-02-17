@@ -11,7 +11,7 @@ const projectRoutes = require('./routes/projectRoutes');
 const aiRoutes=require("./routes/aiRoutes")
 const connectDB = require("./config/db");
 const errorHandler = require("./middlewares/errorHandler");
-
+const personalTrelloRoutes = require('./routes/personalTrello');
 const app = express();
 
 app.use(cors({
@@ -37,6 +37,7 @@ app.use("/auth", authRoutes);
 app.use("/api", notesRoutes);
 app.use("/api",aiRoutes)
 app.use("/api/projects", projectRoutes);
+app.use("/api",personalTrelloRoutes)
 
 app.use(errorHandler);
 

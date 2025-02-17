@@ -26,9 +26,14 @@ export default {
         placeholder: "rgba(50, 51, 51, 0.5)",
         pureWhite: "#FFFEFE", //icon, //white text, //sidebar, //modal, //navbar 
         offWhite: "#FAFBFB", //div background
-        primaryDark: "#323333", //welcome card
+        primaryDark: "#323333", //welcome card  EEE9D2
         lightBlue: '#0094FF',
         lightDark: "#EBEAEB",
+        lightWhite:"F0EFEF",
+        priorityRed:"#FF6F61",
+        lightGreen:"#00BFA6",
+        priorityLow:"#EEE9D2",
+        priorityMedium:"#E4EBF3"
       },
       screens: {
         'xl-custom': '1035px',
