@@ -55,7 +55,7 @@ const createProjectController = asyncHandler(async (req, res) => {
 
 const createProjectIndividualController = asyncHandler(async (req, res) => {
     const { name, description,  image, isGroup } = req.body;
-    const creatorId="67af0e7188002e6b18bfedca"
+    const creatorId=req.user.id
 
     // Validation checks
     if (!name || !creatorId) {
@@ -106,7 +106,7 @@ const checkInviteUserController = asyncHandler(async (req, res, next) => {
             firstName: "AnonX",
             lastName: "",
             email: email,
-            avatar: "/images/Trendy Person Avatar.png",
+            avatar: "/Avatar.png",
         });
     }
 });

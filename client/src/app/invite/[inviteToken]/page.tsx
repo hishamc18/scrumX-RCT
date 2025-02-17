@@ -43,7 +43,7 @@ const InvitePage = () => {
 
   console.log("Invite Token:", inviteToken); // Debugging
 
-  return <div className="text-center text-lg">Processing your invitation...</div>;
+  return <div className="text-center text-lg h-screen">Processing your invitation...</div>;
 };
 
 export default InvitePage;
