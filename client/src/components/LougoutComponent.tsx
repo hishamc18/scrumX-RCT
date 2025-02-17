@@ -11,16 +11,16 @@ function LougoutComponent({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
     const menuRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch<AppDispatch>();
     const user = useSelector((state: RootState) => state.auth.user);
-    const router = useRouter()
+    const router = useRouter();
 
     useEffect(() => {
         dispatch(getNewUserData());
     }, [dispatch]);
 
-    const handleLogout = async() => {
-      await dispatch(logoutUser())
-      router.push('/register')
-    }
+    const handleLogout = async () => {
+        await dispatch(logoutUser());
+        router.push("/register");
+    };
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -49,7 +49,7 @@ function LougoutComponent({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                             <li className=" cursor-pointer">
                                 <div className="flex items-center space-x-2 ">
                                     <img
-                                        src={user?.avatar ?? "/Avatar.png"}
+                                        src={user?.avatar && user.avatar.trim() !== "" ? user.avatar : "/Avatar.png"}
                                         alt="avatar"
                                         className="rounded-full w-[45px] h-[45px]"
                                     />
