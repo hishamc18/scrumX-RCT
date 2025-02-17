@@ -35,7 +35,7 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
 // userData for userCompletation ui--------------------------------------------------------
 exports.newUserInfoController=asyncHandler(async(req,res)=>{
     const user=req.user
-    res.json({email:user.email,firstName:user.firstName,lastName:user.lastName})
+    res.json({email:user.email,firstName:user.firstName,lastName:user.lastName,avatar:user.avatar })
 })
 
 // update Profile (profileCompleted:true)--------------------------------------------

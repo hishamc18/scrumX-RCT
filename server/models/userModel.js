@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema(
     {
         firstName: { type: String, required: true },
         lastName: { type: String },
-        email: { type: String, required: true, unique: true },
+        email: { type: String, unique: true, index: true }, // Added index: true
         googleId: { type: String }, // Store Google ID if needed
         avatar: { type: String },
         provider: { type: String, required: true }, // "google", "github", "local"
