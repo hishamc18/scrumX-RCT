@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from '../../api/axiosInstance'
 
@@ -37,11 +36,11 @@ export const createNote = createAsyncThunk("/createNote", async (newNote: Omit<N
     try {
         const response = await axiosInstance.post("/createNote", newNote);
         console.log(response);
-        
+
         return response.data.note;
     } catch (error: any) {
         console.log(error);
-        
+
         return rejectWithValue(error.response.data.message);
     }
 });

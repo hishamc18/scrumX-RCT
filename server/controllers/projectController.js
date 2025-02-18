@@ -1,23 +1,18 @@
 const asyncHandler = require("../utils//asyncHandler");
 const CustomError = require("../utils/customError");
-const {getProjectsService, createProjectService, JoinProjectService,checkInviteUserService,createProjectIndividualService } = require("../services/projectService");
+const { getProjectsService, createProjectService, JoinProjectService, checkInviteUserService, createProjectIndividualService } = require("../services/projectService");
 
-
-
-
-const getProjectsController=async(req,res)=>{
-   const loginUserId=req.user.id
-   const projects=await getProjectsService(loginUserId)
-   res.json({projects})
+const getProjectsController = async (req, res) => {
+    const loginUserId = req.user.id
+    const projects = await getProjectsService(loginUserId)
+    res.json({ projects })
 
 }
 
-/**
- * Controller to handle project creation
- */
+//  Controller to handle project creation
 const createProjectController = asyncHandler(async (req, res) => {
-    const { name, description, invitedMembers , image, isGroup } = req.body;
-    const creatorId=req.user.id
+    const { name, description, invitedMembers, image, isGroup } = req.body;
+    const creatorId = req.user.id
     const creatorEmail = req.user.email;
     console.log("this is group")
 
@@ -54,8 +49,8 @@ const createProjectController = asyncHandler(async (req, res) => {
 });
 
 const createProjectIndividualController = asyncHandler(async (req, res) => {
-    const { name, description,  image, isGroup } = req.body;
-    const creatorId=req.user.id
+    const { name, description, image, isGroup } = req.body;
+    const creatorId = req.user.id
 
     // Validation checks
     if (!name || !creatorId) {
@@ -65,7 +60,7 @@ const createProjectIndividualController = asyncHandler(async (req, res) => {
         throw new CustomError("Project description is required.", 400);
     }
 
-    const { project} = await createProjectIndividualService({
+    const { project } = await createProjectIndividualService({
         name,
         description,
         creatorId,
@@ -82,11 +77,11 @@ const createProjectIndividualController = asyncHandler(async (req, res) => {
 const joinProjectController = asyncHandler(async (req, res) => {
     const { inviteToken } = req.params;
     const email = req.user.email;
-    console.log(email,"email")
+    console.log(email, "email")
 
     const response = await JoinProjectService(inviteToken, email);
 
-    res.status(200).json(response); // ✅ Always sets a valid status
+    res.status(200).json(response);
 });
 
 // Check invite users
@@ -115,4 +110,4 @@ const checkInviteUserController = asyncHandler(async (req, res, next) => {
 
 
 
-module.exports = {getProjectsController, createProjectController,createProjectIndividualController, joinProjectController,checkInviteUserController };
+module.exports = { getProjectsController, createProjectController, createProjectIndividualController, joinProjectController, checkInviteUserController };

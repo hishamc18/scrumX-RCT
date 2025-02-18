@@ -1,6 +1,6 @@
 const PersonalTrello = require("../models/personalTrelloModel");
 const CustomError = require("../utils/customError");
-const personalStatus=require("../models/personalStatusModel");
+const personalStatus = require("../models/personalStatusModel");
 
 //create new trello
 exports.createTrelloServices = async ({ userID, title, category, status, priority }) => {
@@ -9,11 +9,11 @@ exports.createTrelloServices = async ({ userID, title, category, status, priorit
     throw new CustomError("Invalid status", 400);
   }
   return await PersonalTrello.create({ userID, title, category, status, priority });
-  
+
 };
 
 // Fetch tasks
-exports.fetchTasksService = async (userID) => { 
+exports.fetchTasksService = async (userID) => {
   return await PersonalTrello.find({ userID });
 };
 
@@ -22,7 +22,7 @@ exports.fetchTasksService = async (userID) => {
 // Update task status
 exports.updateTaskServices = async (userID, taskId, status) => {
   const task = await PersonalTrello.findOne({ userID, _id: taskId });
-  
+
   if (!task) throw new CustomError("Task not found", 404);
 
   task.status = status;
@@ -40,7 +40,7 @@ exports.changeStatusServices = async (userID, oldStatus, newStatus) => {
     status === oldStatus ? newStatus : status
   );
   userStatus.status = updatedStatuses;
-  await userStatus.save(); 
+  await userStatus.save();
 
   await PersonalTrello.updateMany(
     { userID, status: oldStatus },
@@ -57,13 +57,13 @@ exports.deleteTrelloServices = async (userID, taskId) => {
 };
 
 //drag And Drop
-exports.dragAndDropServices=async(taskID,status)=>{
+exports.dragAndDropServices = async (taskID, status) => {
   const task = await PersonalTrello.findById(taskID);
-    
+
   if (!task) {
     return res.status(404).json({ message: "Task not found" });
   }
   task.status = status;
-  const updatedTask = await task.save(); 
+  const updatedTask = await task.save();
   return updatedTask
 }

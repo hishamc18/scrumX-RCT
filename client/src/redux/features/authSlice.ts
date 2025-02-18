@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { User } from '../types';
 import axiosInstance from '@/api/axiosInstance';
 
@@ -16,14 +15,6 @@ interface AuthState {
   passwordResetSuccess: boolean;
   passwordResetError: string | null;
 }
-
-// interface UserData {
-//   firstName: string | null;
-//   lastName: string | null;
-//   userProfession: string | null;
-//   password: string | null;
-//   email: string | null
-// }
 
 const initialState: AuthState = {
   user: null,
@@ -42,7 +33,7 @@ const initialState: AuthState = {
 // Google OAuth
 export const googleOAuth = createAsyncThunk('auth/google', async () => {
   try {
-    window.location.href = 'http://localhost:3300/auth/google';
+    window.location.href = 'http://localhost:3300/api/auth/google';
   } catch (err) {
     console.error(err);
   }
@@ -51,7 +42,7 @@ export const googleOAuth = createAsyncThunk('auth/google', async () => {
 // Fetch New User Data
 export const getNewUserData = createAsyncThunk('auth/getNewUserData', async () => {
   try {
-    const response = await axios.get("http://localhost:3300/auth/user", { withCredentials: true })
+    const response = await axiosInstance.get("auth/user")
     return response.data
   } catch (err) {
     console.error(err);
@@ -61,8 +52,8 @@ export const getNewUserData = createAsyncThunk('auth/getNewUserData', async () =
 
 export const updateUserData = createAsyncThunk('auth/updateUserData', async (userData: any) => {
   try {
-    const response = await axios.post
-      ("http://localhost:3300/auth/updateProfileAndLogin", userData, { withCredentials: true })
+    const response = await axiosInstance.post
+      ("/auth/updateProfileAndLogin", userData)
 
     if (response.data.profileCompleted) {
       window.location.href = "/home";
@@ -79,17 +70,15 @@ export const updateUserData = createAsyncThunk('auth/updateUserData', async (use
 export const updateUserProfile = createAsyncThunk<User, FormData>(
   "auth/myAccountUpdate",
   async (formData, { rejectWithValue }) => {
-
     try {
-      const response = await axios.put(
-        "http://localhost:3300/auth/editUser",
-        formData,
-        { withCredentials: true, }
+      const response = await axiosInstance.put(
+        "auth/editUser",
+        formData
       );
 
       return response.data.user;
     } catch (error: any) {
-
+      console.log(error);
 
       return rejectWithValue(error.response?.data?.error);
     }
@@ -102,17 +91,13 @@ export const compareUserPassword = createAsyncThunk(
   async (currentPassword: { currentPassword: string }, { rejectWithValue }) => {
 
     try {
-      console.log(currentPassword, 'try')
-      const response = await axios.post(
-        "http://localhost:3300/auth/comparePassword",
-        currentPassword,
-        { withCredentials: true }
+      const response = await axiosInstance.post(
+        "/auth/comparePassword",
+        currentPassword
       );
-
       return response.data;
     } catch (error: any) {
-      console.log(error)
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.error);
     }
   }
 );
@@ -124,10 +109,10 @@ export const updateUserPassword = createAsyncThunk<
   { currentPassword: string; newPassword: string }
 >("auth/updateUserPassword", async ({ currentPassword, newPassword }, { rejectWithValue }) => {
   try {
-    const response = await axios.put("http://localhost:3300/auth/editPassword", {
+    const response = await axiosInstance.put("/auth/editPassword", {
       currentPassword,
       newPassword,
-    }, { withCredentials: true, });
+    });
     return response.data.user;
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.error || "Password update failed");
@@ -141,7 +126,7 @@ export const checkEmailExists = createAsyncThunk(
   'auth/checkEmailExists',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:3300/auth/check-email", { email });
+      const response = await axiosInstance.post("/auth/check-email", { email });
       return response.data.exists; // true or false
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "Failed to check email");
@@ -154,7 +139,7 @@ export const sendOtp = createAsyncThunk(
   'auth/sendOtp',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:3300/auth/send-otp", { email });
+      const response = await axiosInstance.post("/auth/send-otp", { email });
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "Failed to send OTP");
@@ -167,8 +152,7 @@ export const verifyOtp = createAsyncThunk(
   'auth/verifyOtp',
   async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:3300/auth/verify-otp", { email, otp }, { withCredentials: true });
-      console.log(response);
+      const response = await axiosInstance.post("/auth/verify-otp", { email, otp });
 
       return response.data;
     } catch (err: any) {
@@ -182,8 +166,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:3300/auth/login", { email, password }, { withCredentials: true });
-      console.log(response.data);
+      const response = await axiosInstance.post("/auth/login", { email, password });
 
       return response.data;
     } catch (err: any) {
@@ -196,7 +179,7 @@ export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3300/auth/forgot-password', { email }, { withCredentials: true });
+      const response = await axiosInstance.post('/auth/forgot-password', { email });
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to send reset email');
@@ -211,7 +194,7 @@ export const resetPassword = createAsyncThunk(
     console.log(token, password, "slice");
 
     try {
-      const response = await axios.post(`http://localhost:3300/auth/reset-password/${token}`, { password }, { withCredentials: true });
+      const response = await axiosInstance.post(`/auth/reset-password/${token}`, { password });
       return response.data;
     } catch (err: any) {
       console.log(err);
@@ -226,7 +209,7 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue }>(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
-      await axios.post("http://localhost:3300/auth/logout", {}, { withCredentials: true });
+      await axiosInstance.post("/auth/logout", {},);
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "Failed to logout");
     }
@@ -269,6 +252,7 @@ const authSlice = createSlice({
       })
       .addCase(compareUserPassword.fulfilled, (state, action) => {
         state.loading = false
+        state.error = false
       })
       .addCase(compareUserPassword.rejected, (state, action) => {
         state.loading = false

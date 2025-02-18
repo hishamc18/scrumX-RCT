@@ -1,8 +1,8 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { verifyOtp } from "../redux/features/authSlice";
-import { RootState, AppDispatch } from "../redux/app/store";
+import { verifyOtp } from "../../redux/features/authSlice";
+import { RootState, AppDispatch } from "../../redux/app/store";
 import { useRouter } from "next/navigation";
 
 export default function OTPComponent({ email }: { email: string }) {

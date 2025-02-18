@@ -2,7 +2,7 @@
 
 import { AppDispatch, RootState } from "@/redux/app/store";
 import { getNewUserData, updateUserData } from "@/redux/features/authSlice";
-import LoginInputField from "@/components/LoginInputField";
+import LoginInputField from "@/components/InputFields/LoginInputField";
 import Image from "next/image";
 import { Formik, Form } from "formik";
 import { useEffect, useState } from "react";

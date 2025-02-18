@@ -6,7 +6,6 @@ import MyProfile from "@/app/home/my_account/page";
 
 // Sample project
 const groupProjects = [{ projectName: "Chat App" }, { projectName: "Remote Collaboration" }];
-
 const individualProjects = [{ projectName: "Portfolio Website" }, { projectName: "Task Manager" }];
 
 const Sidebar = () => {
@@ -16,12 +15,16 @@ const Sidebar = () => {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
+    // Fetch the active link from localStorage when the component mounts
     useEffect(() => {
-        setActiveLink(activeLink); // Ensure active state on first render
+        const storedActiveLink = sessionStorage.getItem("activeLink");
+        if (storedActiveLink) {
+            setActiveLink(storedActiveLink);
+        }
     }, []);
 
-    const [activeLink, setActiveLink] = useState<string>("home"); // Track active link
+    const [activeLink, setActiveLink] = useState<string>("/home");
 
     const toggleSection = (section: "group" | "individual") => {
         setOpenSections((prev) => ({
@@ -31,12 +34,14 @@ const Sidebar = () => {
     };
 
     const handleLinkClick = (link: string) => {
+        // Save the active link to localStorage
+        sessionStorage.setItem("activeLink", link);
         setIsModalOpen(false);
-        setActiveLink(link); // Set the active link on click
+        setActiveLink(link);
     };
 
     const handleAccountLinkClick = () => {
-        setActiveLink(""); // Set the active link on click
+        setActiveLink(""); 
         setIsModalOpen(true);
     };
 

@@ -4,7 +4,6 @@ const verifyToken = require("../middlewares/verifyToken");
 
 const router = express.Router();
 
-// Routes for ai
 router.post("/aiChat", verifyToken, chatWithAI);
 router.get("/aiHistory", verifyToken, aiHistory);
 

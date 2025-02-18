@@ -4,7 +4,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/app/store";
 import { getNewUserData } from "@/redux/features/authSlice";
-import LougoutComponent from "./LougoutComponent";
+import LougoutComponent from "@/components/Layout/LougoutComponent";
 function Navbar() {
     const dispatch = useDispatch<AppDispatch>();
     const user = useSelector((state: RootState) => state.auth.user);
@@ -49,7 +49,10 @@ function Navbar() {
                     <div className="hidden lg:flex flex-col">
                         <span className="text-gray-800 flex items-center gap-1">
                             {`${user?.firstName} ${user?.lastName}`}
-                            <FaChevronDown className="text-gray-600 cursor-pointer ml-1 -mt-1 h-[11px] w-[11px]" onClick={toggleLogout} />
+                            <FaChevronDown
+                                className="text-gray-600 cursor-pointer ml-1 -mt-1 h-[11px] w-[11px]"
+                                onClick={toggleLogout}
+                            />
                         </span>
                         <small className="text-gray-600">{user?.userProfession}</small>
                     </div>

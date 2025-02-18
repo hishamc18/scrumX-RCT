@@ -6,7 +6,7 @@ const PersonalstatusSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    status: [{ type: String, required: true, unique: true }],
+    status: [{ type: String, required: true }],
 });
 
 const PersonalStatus = mongoose.model("PersonalStatus", PersonalstatusSchema);

@@ -1,30 +1,26 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require('cors')
-
 const passport = require("passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const authRoutes = require("./routes/authRoutes");
-const notesRoutes = require('./routes/notesRoutes');
-const projectRoutes = require('./routes/projectRoutes');
-const aiRoutes=require("./routes/aiRoutes")
 const connectDB = require("./config/db");
 const errorHandler = require("./middlewares/errorHandler");
-const personalTrelloRoutes = require('./routes/personalTrello');
+const routes = require("./routes/index");
 const app = express();
 
+// cors
 app.use(cors({
-    origin: ["http://localhost:3000", "http://localhost:3300"],
-    methods:['GET','POST' ,'PUT', 'PATCH', 'DELETE'],
+    origin: process.env.FRONT_END_URL,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true
 }));
 
-//Connection
+// Connection
 connectDB()
 require("./config/passport");
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
@@ -32,13 +28,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-// Routes
-app.use("/auth", authRoutes);
-app.use("/api", notesRoutes);
-app.use("/api",aiRoutes)
-app.use("/api/projects", projectRoutes);
-app.use("/api",personalTrelloRoutes)
+// Centralized routes
+app.use("/api", routes);
 
+// Global errorHandler
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

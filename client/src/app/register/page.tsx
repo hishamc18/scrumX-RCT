@@ -1,9 +1,9 @@
 "use client";
-import GoogleSignInButton from "@/components/GoogleSignInButton";
+import GoogleSignInButton from "@/components/Authentication/GoogleSignInButton";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import LoginInputField from "@/components/LoginInputField";
-import OtpInputField from "@/components/OtpComponent";
+import LoginInputField from "@/components/InputFields/LoginInputField";
+import OtpInputField from "@/components/Authentication/OtpComponent";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/app/store";

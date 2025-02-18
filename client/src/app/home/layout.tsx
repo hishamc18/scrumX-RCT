@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { SlArrowRight } from "react-icons/sl";
 import ChatWithAI from "@/components/chatWithAi";
-import Sidebar from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Layout/Sidebar";
+import Navbar from "@/components/Layout/Navbar";
 import ReduxProvider from "../../redux/ReduxProvider";
 import "../../app/globals.css";
 
@@ -19,8 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     const updateImagePosition = () => {
       setImagePosition({
-        x: window.innerWidth * 0.95,
-        y: window.innerHeight * 0.91,
+        x: window.innerWidth * 0.94,
+        y: window.innerHeight * 0.90,
       });
     };
 
@@ -101,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </button>
 
             {/* Draggable Blackbox AI Image */}
-            <div
+            {/* <div
               className="fixed cursor-grab active:cursor-grabbing z-[9999]"
               style={{
                 left: `${imagePosition.x}px`,
@@ -115,7 +115,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 alt="Chat AI"
                 className="w-12 h-12 z-50 rounded-full border-[1px] border-black hidden sm:block"
               />
-            </div>
+            </div> */}
+
+<div
+  className="fixed cursor-grab active:cursor-grabbing z-[9999] flex items-center justify-center"
+  style={{
+    left: `${imagePosition.x}px`,
+    top: `${imagePosition.y}px`,
+  }}
+  onMouseDown={startDrag}
+  onClick={openChat}
+>
+  {/* Rotating AI Ring */}
+  <div className="relative w-16 h-16 rounded-full flex items-center justify-center group">
+    <div className="absolute w-16 h-16 flex justify-center items-center rounded-full animate-rotate-ring shadow-lg z-0"></div>
+    
+    <img
+      src="/logo.png"
+      alt="Chat AI"
+      className="w-14 h-14 rounded-full z-10 hidden sm:block"
+    />
+
+    {/* Tooltip Text */}
+    <div className="absolute bottom-full mb-5 hidden group-hover:block text-black text-[12px] font-semibold px-2 py-1 rounded-md bg-white border-purple-700 border-[1px] shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-2">
+      AI
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
             {/* AI Chat Modal Above the Image */}
             {isChatOpen && (

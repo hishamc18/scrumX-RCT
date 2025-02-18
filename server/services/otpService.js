@@ -8,8 +8,7 @@ const sendOtp = async (email) => {
   const otp = generateOtp();
   await Otp.create({ email, otp });
 
-  // ✅ Use the template and pass it to sendEmail
-  const html = otpTemplate(otp);  
+  const html = otpTemplate(otp);
   await sendEmail(email, "Your OTP for mail verification", otp, html);
 
   return { message: "OTP sent successfully" };

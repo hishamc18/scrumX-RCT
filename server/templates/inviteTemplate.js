@@ -1,12 +1,5 @@
 const sendEmail = require("../utils/sendEmail");
 
-/**
- * Send invitation emails
- * @param {Array} emails - List of invited members
- * @param {String} projectName - Project Name
- * @param {String} projectDescription - Project Description
- * @param {String} inviteLink - Invite link
- */
 const sendInviteEmails = async (inviteLinksResolved, projectName, projectDescription) => {
     for (const { email, inviteLink } of inviteLinksResolved) {
         console.log(inviteLink)
@@ -29,4 +22,4 @@ const sendInviteEmails = async (inviteLinksResolved, projectName, projectDescrip
     }
 };
 
-module.exports={sendInviteEmails}
+module.exports = { sendInviteEmails }

@@ -1,4 +1,4 @@
-const { googleCallBackService, updateProfileAndLoginService, sendOtp, verifyOtp, checkEmailExistsService, loginUserService, generateResetToken, resetPassword,  editUserService, editPasswotdService, compareUserPasswordService } = require("../services/authService");
+const { googleCallBackService, updateProfileAndLoginService, sendOtp, verifyOtp, checkEmailExistsService, loginUserService, generateResetToken, resetPassword, editUserService, editPasswotdService, compareUserPasswordService } = require("../services/authService");
 const asyncHandler = require("../utils/asyncHandler");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateToken");
 const { profileCompletionSchema } = require("../validators/authenticationValidator");
@@ -18,10 +18,10 @@ exports.googleCallbackController = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "None",
-        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.cookie("accessToken", accessToken, {
-        httpOnly: true, 
+        httpOnly: true,
         secure: true,
         // maxAge: 15 * 60 * 1000, 
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -79,7 +79,7 @@ exports.refreshTokenController = asyncHandler(async (req, res) => {
 
     const newAccessToken = generateAccessToken({ id: decoded.id, email: decoded.email });
     res.cookie("accessToken", newAccessToken, {
-        httpOnly: true, 
+        httpOnly: true,
         secure: true,
         maxAge: 15 * 60 * 1000,
         sameSite: "None",
@@ -179,9 +179,9 @@ exports.resetPassword = asyncHandler(async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
-    const { user, accessToken, refreshToken } = await resetPassword(token, password);    
+    const { user, accessToken, refreshToken } = await resetPassword(token, password);
     console.log(user, accessToken, refreshToken);
-    
+
     if (!user) throw new CustomError("Invalid or expired token", 400);
 
     res.cookie("refreshToken", refreshToken, {
@@ -206,6 +206,8 @@ exports.editUserController = asyncHandler(async (req, res) => {
     const userId = req.user.id
 
     let { firstName, lastName, userProfession, avatar, } = req.body
+    console.log(req.body);
+    
     if (req.file) {
         avatar = req.file.path
     }
@@ -239,16 +241,16 @@ exports.editUserController = asyncHandler(async (req, res) => {
 exports.compareUserPasswordController = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const { currentPassword } = req.body;
-    
+
     try {
-        const result = await compareUserPasswordService({userId, currentPassword});
+        const result = await compareUserPasswordService({ userId, currentPassword });
 
         res.status(200).json(result);
-      } catch (error) {
+    } catch (error) {
         res.status(400).json({ error: error.message });
-      }
-  });
-  
+    }
+});
+
 
 exports.editPasswordController = asyncHandler(async (req, res) => {
     const userId = req.user.id

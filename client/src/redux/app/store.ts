@@ -9,9 +9,9 @@ const store = configureStore({
   reducer: {
     auth: authSlice,
     notes: notesReducer,
-    aichat:aiSlice,
-    project:projectReducer,
-    trello:trelloPersonal
+    aichat: aiSlice,
+    project: projectReducer,
+    trello: trelloPersonal
   },
 });
 

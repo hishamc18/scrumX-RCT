@@ -8,7 +8,7 @@ const verifyInviteToken = (token) => {
   try {
     return jwt.verify(token, process.env.PROJECT_JWT_SECRET);
   } catch (error) {
-    console.log(error,"ds")
+    console.log(error)
 
   }
 };

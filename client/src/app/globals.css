@@ -22,12 +22,15 @@ body {
 
 /* Hide scrollbar but keep the scroll functionality */
 .scrollbar-hidden {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scrollbar-hidden::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none;
+  /* Safari and Chrome */
 }
 
 html {
@@ -39,16 +42,18 @@ html {
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
 }
 
-/* Custom Animation for Slide Out (right to left) */
+/* Custom Animation for Slidebar Out (right to left) */
 @keyframes slideOut {
   from {
     transform: translateX(0);
   }
+
   to {
     transform: translateX(-100%);
   }
@@ -56,7 +61,7 @@ html {
 
 
 
-/* Tailwind CSS Animation classes */
+/* CSS Animation classes */
 .animate-slideIn {
   animation: slideIn 0.7s ease-out forwards;
 }
@@ -65,3 +70,31 @@ html {
   animation: slideOut 0.5s ease-out forwards;
 }
 
+
+
+
+/*  ai button */
+@keyframes rotateRing {
+  0% {
+    transform: rotate(0deg);
+    box-shadow: 2px 1px 2px rgba(0, 0, 0, 0.8), 1px 2px 2px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  50% {
+    transform: rotate(180deg);
+    box-shadow: 2px 1px 2px rgba(170, 15, 208, 0.8), 1px 2px 2px 2px rgba(170, 15, 208, 0.8);
+  }
+
+  100% {
+    transform: rotate(360deg);
+    box-shadow: 2px 1px 2px rgba(0, 0, 0, 0.8), 1px 2px 2px 2px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.animate-rotate-ring {
+  animation: rotateRing 3s linear infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}

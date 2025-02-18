@@ -3,7 +3,7 @@ const { chatAiService, getAiHistoryService } = require("../services/aiService");
 
 exports.chatWithAI = asyncHandler(async (req, res) => {
     const { message } = req.body;
-    
+
     const userID = req.user.id;
 
     if (!userID || !message) {
@@ -16,7 +16,7 @@ exports.chatWithAI = asyncHandler(async (req, res) => {
 });
 
 exports.aiHistory = asyncHandler(async (req, res) => {
-    
+
     const userID = req.user.id;
 
     const history = await getAiHistoryService(userID);

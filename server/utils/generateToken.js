@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const generateAccessToken = (user) => {    
+const generateAccessToken = (user) => {
     return jwt.sign(
         {
             id: user._id,
@@ -8,10 +8,10 @@ const generateAccessToken = (user) => {
             firstName: user.firstName || " ",
             lastName: user.lastName || " ",
             avatar: user.avatar || " ",
-            profileCompleted:user.profileCompleted,
-            userProfession:user.userProfession || " "
+            profileCompleted: user.profileCompleted,
+            userProfession: user.userProfession || " "
         },
-        process.env.JWT_ACCESS_SECRET, 
+        process.env.JWT_ACCESS_SECRET,
         { expiresIn: "7d" }
     );
 };
@@ -24,11 +24,11 @@ const generateRefreshToken = (user) => {
             firstName: user.firstName || " ",
             lastName: user.lastName || " ",
             avatar: user.avatar || " ",
-            profileCompleted:user.profileCompleted,
-            userProfession:user.userProfession || " "
+            profileCompleted: user.profileCompleted,
+            userProfession: user.userProfession || " "
         },
         process.env.JWT_REFRESH_SECRET,
-        { expiresIn: "7d" } // Refresh token expires in 7 days
+        { expiresIn: "7d" }
     );
 };
 

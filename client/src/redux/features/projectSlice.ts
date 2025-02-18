@@ -1,21 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/api/axiosInstance";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 
-
 interface JoinedMembers {
-  userId: string; 
+  userId: string;
   role: string;
   _id: string;
 }
+
 // Define the structure of a project
 interface Project {
   name: string;
   description: string;
   image: string;
   isGroup: boolean;
-  joinedMembers:JoinedMembers[]
+  joinedMembers: JoinedMembers[]
   invitedMembers: string[];
 }
 
@@ -29,18 +28,18 @@ interface InvitedUser {
 // Define the initial state
 interface ProjectState {
   projects: Project[];
-  allProjects:Project[]
+  allProjects: Project[]
   checkInvitedUser: InvitedUser | null;
-  invitedUser:InvitedUser[]
+  invitedUser: InvitedUser[]
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: ProjectState = {
   projects: [],
-  allProjects:[],
+  allProjects: [],
   checkInvitedUser: null,
-  invitedUser:[],
+  invitedUser: [],
   status: "idle",
   error: null,
 };
@@ -50,7 +49,7 @@ export const createProject = createAsyncThunk(
   "projects/createProject",
   async (projectData: Project, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/projects/create",projectData)
+      const response = await axiosInstance.post("/projects/create", projectData)
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Something went wrong");
@@ -61,7 +60,7 @@ export const createIndividualProject = createAsyncThunk(
   "projects/createIndividualProject",
   async (projectData: Project, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("projects/individual-create",projectData)
+      const response = await axiosInstance.post("projects/individual-create", projectData)
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Something went wrong");
@@ -74,7 +73,7 @@ export const checkInviteUser = createAsyncThunk(
   "projects/checkInviteUser",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/projects/check-invite-user",{email})
+      const response = await axiosInstance.post("/projects/check-invite-user", { email })
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Something went wrong");
@@ -82,8 +81,8 @@ export const checkInviteUser = createAsyncThunk(
   }
 );
 
-export const getProjects=createAsyncThunk("projects/getGroupProjects",async()=>{
-  const response=await axiosInstance.get("/projects/all")
+export const getProjects = createAsyncThunk("projects/getGroupProjects", async () => {
+  const response = await axiosInstance.get("/projects/all")
   return response.data
 })
 
@@ -97,7 +96,7 @@ export const joinGroupProjects = createAsyncThunk(
         return rejectWithValue("User Not Found"); // Handle in component
       }
       return response.data;
-    } catch (error:any) {
+    } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Something went wrong");
     }
   }
@@ -113,8 +112,8 @@ const projectSlice = createSlice({
         latestProject.invitedMembers.push(action.payload);
       }
     },
-    clearInvitedUser:(state,action)=>{
-      state.invitedUser=action.payload
+    clearInvitedUser: (state, action) => {
+      state.invitedUser = action.payload
     },
     removeInvitedUser: (state, action: PayloadAction<string>) => {
       const latestProject = state.projects[state.projects.length - 1];
@@ -132,7 +131,7 @@ const projectSlice = createSlice({
       })
       .addCase(createProject.fulfilled, (state, action) => {
         state.status = "succeeded";
-        console.log( state.status)
+        console.log(state.status)
         state.projects.push(action.payload);
       })
       .addCase(createProject.rejected, (state, action) => {
@@ -150,16 +149,16 @@ const projectSlice = createSlice({
         state.invitedUser.push(action.payload);
       })
       .addCase(checkInviteUser.rejected, (state, action) => {
-        console.error(action.payload, "API call failed"); // Log error
+        console.error(action.payload, "API call failed");
         state.status = "failed";
-        state.error = action.payload as string; // Store the error message
+        state.error = action.payload as string;
       })
-      .addCase(getProjects.fulfilled,(state,action)=>{
-        console.log(action.payload,"payload")
-        state.allProjects=action.payload.projects 
+      .addCase(getProjects.fulfilled, (state, action) => {
+        console.log(action.payload, "payload")
+        state.allProjects = action.payload.projects
       })
   },
 });
 
-export const { addInvitedUser, removeInvitedUser,clearInvitedUser } = projectSlice.actions;
+export const { addInvitedUser, removeInvitedUser, clearInvitedUser } = projectSlice.actions;
 export default projectSlice.reducer;

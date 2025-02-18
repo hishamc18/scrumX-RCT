@@ -5,9 +5,9 @@ const { generateInviteToken, verifyInviteToken } = require("../utils/contributor
 const CustomError = require("../utils/customError");
 
 //  * Create a new project and generate invite links
-const getProjectsService = async(loginUserId) => {
-    const projects= await Project.find({ "joinedMembers.userId": loginUserId });
-   return projects
+const getProjectsService = async (loginUserId) => {
+    const projects = await Project.find({ "joinedMembers.userId": loginUserId });
+    return projects
 };
 
 const createProjectService = async ({ name, description, invitedMembers = [], creatorId, image, isGroup }) => {
@@ -35,28 +35,28 @@ const createProjectService = async ({ name, description, invitedMembers = [], cr
     const inviteLinks = invitedMembers.map(async (email) => {
         const inviteToken = await generateInviteToken(project._id, email);
         if (!inviteToken) {
-          throw new CustomError(`Failed to generate an invite token for ${email}.`, 500);
+            throw new CustomError(`Failed to generate an invite token for ${email}.`, 500);
         }
-      
-        return {
-          email,
-          inviteLink: `http://localhost:3000/invite/${inviteToken}`,
-        };
-      });
 
-      // Resolve all promises
-const inviteLinksResolved = await Promise.all(inviteLinks);
+        return {
+            email,
+            inviteLink: `http://localhost:3000/invite/${inviteToken}`,
+        };
+    });
+
+    // Resolve all promises
+    const inviteLinksResolved = await Promise.all(inviteLinks);
     // // Send invitation emails
     // await sendInviteEmails(invitedMembers, name, description, inviteLink);
     // Send invitation emails
-await sendInviteEmails(inviteLinksResolved, name, description);
+    await sendInviteEmails(inviteLinksResolved, name, description);
 };
-const createProjectIndividualService = async ({ name, description,  creatorId, image, isGroup }) => {
+const createProjectIndividualService = async ({ name, description, creatorId, image, isGroup }) => {
     // Ensure required fields are present
     if (!name || !description || !creatorId) {
         throw new CustomError("Project name, description, and creator ID are required.", 400);
     }
-    
+
 
     // Create project
     const project = new Project({
@@ -69,7 +69,7 @@ const createProjectIndividualService = async ({ name, description,  creatorId, i
 
     await project.save();
 
-    return { project};
+    return { project };
 };
 
 const JoinProjectService = async (inviteToken, email) => {
@@ -83,7 +83,7 @@ const JoinProjectService = async (inviteToken, email) => {
         throw new CustomError("Project not found", 404);
     }
 
-    const user = await User.findOne({ email: decoded.invitedEmail, profileCompleted:true });
+    const user = await User.findOne({ email: decoded.invitedEmail, profileCompleted: true });
     if (!user) {
         throw new CustomError("No account found. Please sign up before joining.", 400);
     }
@@ -111,4 +111,4 @@ const checkInviteUserService = async (email) => {
     return await User.findOne({ email }).select("firstName lastName email avatar");
 };
 
-module.exports = {getProjectsService, createProjectService, JoinProjectService, checkInviteUserService ,createProjectIndividualService};
+module.exports = { getProjectsService, createProjectService, JoinProjectService, checkInviteUserService, createProjectIndividualService };

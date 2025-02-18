@@ -21,7 +21,7 @@ exports.googleCallBackService = async (googleUser) => {
             provider: googleUser.provider,
             googleId: googleUser.id,
             avatar: googleUser.photos[0].value,
-            profileCompleted: false, // User needs to complete extra credentials
+            profileCompleted: false,
         });
         await user.save();
     }
@@ -58,43 +58,42 @@ exports.updateProfileAndLoginService = async ({ email, password, userProfession,
     user.lastName = lastName
     user.userProfession = userProfession;
     user.profileCompleted = true; // Mark profile as completed
-    user.avatar = "/Avatar.png"
 
     await user.save();
-  
-  // Generate access and refresh tokens
-  const accessToken = await generateAccessToken(user);
-  const refreshToken = await generateRefreshToken(user);
 
-  return {accessToken,refreshToken,user}
+    // Generate access and refresh tokens
+    const accessToken = await generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+
+    return { accessToken, refreshToken, user }
 }
 
 // check user exists
 exports.checkEmailExistsService = async (email) => {
-  const user = await User.findOne({ email });
-  return user ? true : false;
+    const user = await User.findOne({ email });
+    return user ? true : false;
 };
 
 // login using password
-exports.loginUserService = async (email, password) => {  
-  if (!email || !password) {
-      throw new CustomError("Email and password are required", 400);
-  }
-  const user = await User.findOne({ email });
-  if (!user) {
-      throw new CustomError("Invalid email or password", 401);
-  }
+exports.loginUserService = async (email, password) => {
+    if (!email || !password) {
+        throw new CustomError("Email and password are required", 400);
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new CustomError("Invalid email or password", 401);
+    }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  
-  if (!isMatch) {
-      throw new CustomError("Invalid email or password", 401);
-  }
+    const isMatch = await bcrypt.compare(password, user.password);
 
-  const accessToken = await generateAccessToken(user);
-  const refreshToken = await generateRefreshToken(user);
+    if (!isMatch) {
+        throw new CustomError("Invalid email or password", 401);
+    }
 
-  return { accessToken, refreshToken };
+    const accessToken = await generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+
+    return { accessToken, refreshToken };
 };
 
 
@@ -102,83 +101,87 @@ exports.loginUserService = async (email, password) => {
 exports.sendOtp = async (email) => {
     const otp = generateOtp();
     await Otp.create({ email, otp });
-     
+
     const html = otpTemplate(otp);
     await sendEmail(email, "Your OTP for mail verification", html);
-  
-    return { message: "OTP sent successfully" };
-  };
-  
 
-  //verify otp
+    return { message: "OTP sent successfully" };
+};
+
+
+//verify otp
 exports.verifyOtp = async (email, enteredOtp) => {
     const otpDoc = await Otp.findOne({ email }).sort({ createdAt: -1 });
-  
+
     if (!otpDoc) {
-      throw new CustomError("OTP expired or not found");
+        throw new CustomError("OTP expired or not found");
     }
-  
+
     if (otpDoc.otp !== enteredOtp) {
-      throw new CustomError("Invalid OTP");
+        throw new CustomError("Invalid OTP");
     }
-  
+
     await Otp.deleteOne({ email });
 
     let user = await User.create({
-      email,
-      provider: "OTP",
+        email,
+        provider: "OTP",
     })
 
-    user = await User.findOne({ email });    
+    user = await User.findOne({ email });
+
+    user.avatar = "/Avatar.png"
+
+    await user.save()
 
     const accessToken = await generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
 
     return { message: "OTP verified successfully", accessToken, refreshToken };
-  };
-  
+};
 
-  
-  // Generate Reset Token
+
+
+// Generate Reset Token
 exports.generateResetToken = async (email) => {
-  console.log(email);
-  
-  const user = await User.findOne({ email });
-  
-  if (!user) throw new CustomError("User not found", 404);
+    console.log(email);
 
-  const resetToken = await generateAccessToken(user);
+    const user = await User.findOne({ email });
 
-  user.resetPasswordToken = resetToken;
-  user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
-  await user.save();
+    if (!user) throw new CustomError("User not found", 404);
 
-  return resetToken;
+    const resetToken = await generateAccessToken(user);
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+    await user.save();
+
+    return resetToken;
 };
 
 // Reset Password Logic
 exports.resetPassword = async (token, newPassword) => {
-  try {    
-    
-      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-      const user = await User.findById(decoded.id);
-      
+    try {
 
-      if (!user || user.resetPasswordExpires < Date.now()) throw new CustomError("Token expired or invalid", 400);
-
-      user.password = await bcrypt.hash(newPassword, 10);
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save();
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+        const user = await User.findById(decoded.id);
 
 
-      const accessToken = await generateAccessToken(user);
-    const refreshToken = await generateRefreshToken(user);
+        if (!user || user.resetPasswordExpires < Date.now()) throw new CustomError("Token expired or invalid", 400);
 
-      return { user, accessToken, refreshToken };
-  } catch (error) {
-      throw new CustomError("Invalid or expired token", 400);
-  }
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+
+        const accessToken = await generateAccessToken(user);
+        const refreshToken = await generateRefreshToken(user);
+
+        return { user, accessToken, refreshToken };
+    } catch (error) {
+        throw new CustomError("Invalid or expired token", 400);
+    }
 };
 
 exports.editUserService = async ({ firstName, lastName, userProfession, avatar, userId }) => {

@@ -4,8 +4,8 @@ const { createNoteService, updateNoteService, deleteNoteService, getUserNotesSer
 // Create a Note
 exports.createNote = asyncHandler(async (req, res) => {
   const { title, content, backgroundColor } = req.body;
-  const userID = req.user.id; 
-  
+  const userID = req.user.id;
+
 
   const note = await createNoteService({ userID, title, content, backgroundColor });
 
@@ -18,20 +18,20 @@ exports.createNote = asyncHandler(async (req, res) => {
 
 //get use'/s full note
 exports.getUserNotes = asyncHandler(async (req, res) => {
-    const userID = req.user.id; 
-  
+  const userID = req.user.id;
+
   const notes = await getUserNotesService(userID);
 
   res.status(200).json({ success: true, notes });
 });
 
-  
+
 
 // Update a Note
 exports.updateNote = asyncHandler(async (req, res) => {
   const { noteID } = req.params;
   const { title, content, backgroundColor } = req.body;
-  const userID = req.user.id; 
+  const userID = req.user.id;
 
   const updatedNote = await updateNoteService({ noteID, userID, title, content, backgroundColor });
 
@@ -43,10 +43,10 @@ exports.updateNote = asyncHandler(async (req, res) => {
 
 // Delete a Note
 exports.deleteNote = asyncHandler(async (req, res) => {
-  
+
   const { noteID } = req.params;
-  const userID = req.user.id; 
-  
+  const userID = req.user.id;
+
 
   await deleteNoteService({ noteID, userID });
 

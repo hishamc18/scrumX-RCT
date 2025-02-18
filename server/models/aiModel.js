@@ -10,7 +10,7 @@ const aiSchema = new mongoose.Schema({
     {
       question: { type: String, required: true }, // User's question
       answer: { type: String, required: true }, // AI's response
-      timestamp: { type: Date, default: Date.now }, // Time of interaction
+      timestamp: { type: Date, default: Date.now },
     },
   ],
 });

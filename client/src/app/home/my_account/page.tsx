@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaEnvelopeOpenText } from "react-icons/fa6";
-import { Formik, Form, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import InputField from "@/components/InputField";
+import InputField from "@/components/InputFields/InputField";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { getNewUserData, updateUserPassword, updateUserProfile, compareUserPassword } from "@/redux/features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,11 +11,11 @@ import { AppDispatch, RootState } from "@/redux/app/store";
 
 function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const [shouldRender, setShouldRender] = useState(isOpen);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | string | null>(null);
     const [showNewPasswordInput, setShowNewPasswordInput] = useState(false);
 
     const dispatch = useDispatch<AppDispatch>();
-    const user = useSelector((state: RootState) => state.auth.user);
+    const { user, error } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         dispatch(getNewUserData());
@@ -40,13 +40,13 @@ function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 
     const profileValidationSchema = Yup.object({
         firstName: Yup.string().max(15, "Must be 15 characters or less").required("First Name is required"),
-        lastName: Yup.string().required("Last Name is required"),
+        lastName: Yup.string().max(15, "Must be 15 characters or less").required("Last Name is required"),
         profession: Yup.string().required("Profession is required"),
     });
 
     const passwordValidationSchema = Yup.object({
         password: Yup.string().required("Current password is required"),
-        newpassword: Yup.string().required("New password is required"),
+        newpassword: Yup.string().min(8, "Must be 15 characters or less").required("New password is required"),
     });
 
     const handleProfileSubmit = (values: FormValues) => {
@@ -80,8 +80,7 @@ function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             )
                 .unwrap()
                 .then((res) => {
-                    console.log(res);
-                    alert(res);
+                    alert("Your Password Updated");
                     dispatch(getNewUserData());
                     setShowNewPasswordInput(false);
                 });
@@ -99,9 +98,7 @@ function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             if (response?.message) {
                 setShowNewPasswordInput(true);
             }
-        } catch (error) {
-            console.log(error, "compare");
-        }
+        } catch (error) {}
     };
 
     interface FormValues {
@@ -120,7 +117,7 @@ function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                 firstName: user?.firstName || "",
                 lastName: user?.lastName || "",
                 profession: user?.userProfession || " ",
-                avatar: null,
+                avatar: user?.avatar || selectedFile,
                 password: "",
                 newpassword: "",
             }}
@@ -171,51 +168,48 @@ function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center justify-between">
                         <div className="flex flex-col">
                             <label className="text-[12px] text-black font-poppins ">First Name</label>
                             <span className="text-placeholder text-[11px] ">Enter the first part of your name</span>
                         </div>
-                        <div>
+                        <div className="mt-4">
                             <InputField
                                 name="firstName"
                                 id="firstName"
                                 type="text"
                                 className="mt-3 w-[190px] h-[28px] rounded-[10px] "
                             />
-                            <ErrorMessage name=" first Name" className="" />
                         </div>
                     </div>
 
-                    <div className="flex items-center  justify-between -mt-2">
+                    <div className="flex items-center  justify-between -mt-5">
                         <div className="flex flex-col">
                             <label className="text-[12px] text-black  font-poppins">Last Name</label>
                             <span className=" text-placeholder text-[11px] ">Enter the last part of your name</span>
                         </div>
-                        <div>
+                        <div className="mt-4">
                             <InputField
                                 name="lastName"
                                 id="lastName"
                                 type="text"
                                 className="mt-3 w-[190px] h-[28px] rounded-[10px]"
                             />
-                            <ErrorMessage name=" last Name" />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between -mt-2">
+                    <div className="flex items-center justify-between -mt-5">
                         <div className="flex flex-col">
                             <label className="text-[12px] text-black  font-poppins">Profession</label>
                             <span className=" text-placeholder text-[11px] ">Enter your Profession</span>
                         </div>
-                        <div>
+                        <div className="mt-4">
                             <InputField
                                 name="profession"
                                 id="profession"
                                 type="text"
                                 className="mt-3 w-[190px] h-[28px] rounded-[10px]"
                             />
-                            <ErrorMessage name="profe" />
                         </div>
                     </div>
 
@@ -255,31 +249,30 @@ function MyProfile({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                             <label className="text-[12px] text-black font-poppins">Current Password</label>
                             <span className=" text-placeholder text-[11px] ">Enter your current password</span>
                         </div>
-                        <div>
+                        <div className="mt-4">
                             <InputField
                                 name="password"
                                 id="password"
-                                type="text"
+                                type="password"
                                 className="mt-3 w-[190px] h-[28px] rounded-[10px]"
                             />
-                            <ErrorMessage name="pass" />
+                            <div className="text-red-600 text-[11px] -mt-[28px]">{error ? error : " "}</div>
                         </div>
                     </div>
 
                     {showNewPasswordInput && (
-                        <div className="flex items-center justify-between -mt-2">
+                        <div className="flex items-center justify-between -mt-4">
                             <div className="flex flex-col">
                                 <label className="text-[12px] text-black  font-poppins">New Password</label>
                                 <span className=" text-placeholder text-[11px] ">Enter your new password</span>
                             </div>
-                            <div>
+                            <div className="mt-4">
                                 <InputField
                                     name="newpassword"
                                     id="newpassword"
-                                    type="text"
+                                    type="password"
                                     className="mt-3 w-[190px] h-[28px] rounded-[10px]"
                                 />
-                                <ErrorMessage name="newpass" />
                             </div>
                         </div>
                     )}

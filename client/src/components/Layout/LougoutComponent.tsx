@@ -19,6 +19,7 @@ function LougoutComponent({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
     const handleLogout = async () => {
         await dispatch(logoutUser());
+        sessionStorage.clear();
         router.push("/register");
     };
 

@@ -4,18 +4,18 @@ const ProjectSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
-    image:{type:String},
-    isGroup:{type:Boolean},
-    isDeleted:{type:Boolean, default:false},
-    invitedMembers: [{ type: String }], // ✅ Store invited emails
+    image: { type: String },
+    isGroup: { type: Boolean },
+    isDeleted: { type: Boolean, default: false },
+    invitedMembers: [{ type: String }],
     joinedMembers: [
       {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // ✅ Store user ID
-        role: { type: String, enum: ["Founder", "Lead", "Contributor"], default: "Contributor" }, // ✅ User roles
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        role: { type: String, enum: ["Founder", "Lead", "Contributor"], default: "Contributor" },
       },
     ],
   },
-  { timestamps: true } // ✅ Automatically adds createdAt and updatedAt
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Project", ProjectSchema);

@@ -1,17 +1,14 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosInstance from "@/api/axiosInstance";
 
-// Fetch AI chat history (no userId required)
+// Fetch AI chat history
 export const fetchAiHistory = createAsyncThunk(
   "aiChat/fetchAiHistory",
-  
-  async (_, { rejectWithValue }) => { 
+
+  async (_, { rejectWithValue }) => {
     console.log("hgvgfsggsgs")
     try {
-      const response = await axios.get("http://localhost:3300/api/aiHistory", {
-        withCredentials: true, 
-      });
-      console.log(response.data)
+      const response = await axiosInstance.get("/aiHistory");
       return response.data;
     } catch (error: any) {
       console.error("Fetch AI History Error:", error.response?.data || error.message);
@@ -25,12 +22,9 @@ export const chatAi = createAsyncThunk(
   "aiChat/sendMessage",
   async (message: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3300/api/aiChat",
-        { message }, 
-        { withCredentials: true } 
+      const response = await axiosInstance.post("aiChat",
+        { message }
       );
-      console.log(response.data)
       return { question: message, answer: response.data.response };
     } catch (error: any) {
       console.error("AI Chat Error:", error.response?.data || error.message);

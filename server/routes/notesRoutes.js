@@ -4,10 +4,9 @@ const { createNote, updateNote, deleteNote, getUserNotes } = require("../control
 
 const router = express.Router();
 
-// Routes for Notes
 router.post("/createNote", verifyToken, createNote);
-router.put("/updateNote/:noteID", verifyToken, updateNote); 
-router.delete("/deleteNote/:noteID", verifyToken, deleteNote); 
+router.put("/updateNote/:noteID", verifyToken, updateNote);
+router.delete("/deleteNote/:noteID", verifyToken, deleteNote);
 router.get('/userNotes', verifyToken, getUserNotes);
 
 module.exports = router;

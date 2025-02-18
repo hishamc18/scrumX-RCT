@@ -2,8 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const { refreshTokenController, googleCallbackController, updateProfileAndLoginController, newUserInfoController, sendOtpController, verifyOtpController, checkEmailExistsController, loginUser, forgotPassword, resetPassword, editUserController, editPasswordController, compareUserPasswordController, logoutUser } = require("../controllers/authController");
 const verifyToken = require("../middlewares/verifyToken");
-const upload  = require('../middlewares/uploadMiddleware')
-
+const upload = require('../middlewares/uploadMiddleware')
 const router = express.Router();
 
 // Google OAuth Route
@@ -23,18 +22,18 @@ router.post("/verify-otp", verifyOtpController);
 router.post("/check-email", checkEmailExistsController);
 // login with password
 router.post("/login", loginUser);
-
+// forgot password
 router.post("/forgot-password", forgotPassword); // Send reset email
+// reset password
 router.post("/reset-password/:token", resetPassword); // Reset password
-//userDate update
-router.put('/editUser' ,verifyToken, upload.single('avatar'),editUserController)
-//userComparePassword
-router.post('/comparePassword',verifyToken,compareUserPasswordController)
-//userPassword update
-router.put('/editPassword',verifyToken,editPasswordController)
-//logout
+// userDate update
+router.put('/editUser', verifyToken, upload.single('avatar'), editUserController)
+// userComparePassword
+router.post('/comparePassword', verifyToken, compareUserPasswordController)
+// userPassword update
+router.put('/editPassword', verifyToken, editPasswordController)
+// logout
 router.post('/logout', logoutUser);
-
 
 
 module.exports = router;

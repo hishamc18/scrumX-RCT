@@ -4,13 +4,13 @@ const userSchema = new mongoose.Schema(
     {
         firstName: { type: String },
         lastName: { type: String },
-        email: { type: String, unique: true, index: true }, // Added index: true
-        googleId: { type: String }, // Store Google ID if needed
+        email: { type: String, unique: true, index: true },
+        googleId: { type: String },
         avatar: { type: String },
-        provider: { type: String, required: true }, // "google", "github", "local"
+        provider: { type: String, required: true }, // "google", "OTP"
         profileCompleted: { type: Boolean, default: false }, // Track if extra credentials are completed
-        password: { type: String }, // Store password for email-based users
-        userProfession: { type: String }, // New field for user profession
+        password: { type: String },
+        userProfession: { type: String },
         isActive: { type: Boolean, default: true },
         resetPasswordToken: String,
         resetPasswordExpires: Date,
